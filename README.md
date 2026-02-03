@@ -9,7 +9,7 @@ Add to your flake inputs:
 ```nix
 {
   inputs = {
-    my-nixpkgs.url = "github:yourusername/my-nixpkgs";
+    my-nixpkgs.url = "github:rwxd/my-nixpkgs";
   };
   
   outputs = { nixpkgs, my-nixpkgs, ... }: {
