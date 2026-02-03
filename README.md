@@ -85,7 +85,14 @@ in
       # or pkgs.rustPlatform.buildRustPackage, etc.
       pname = "mypackage";
       inherit version src;
-      # ... rest of the build config
+      
+      vendorHash = null;  # or "sha256-..." for Go modules with dependencies
+      
+      meta = {
+        description = "Description of your package";
+        homepage = "https://github.com/owner/repo";
+        license = lib.licenses.mit;
+      };
     };
   };
 }

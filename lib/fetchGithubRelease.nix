@@ -35,10 +35,10 @@
     lib.makeOverridable
       ({ version, hash, revFormat ? null, ... }@overrideArgs:
         let
-          actualRevFormat = if revFormat != null then revFormat else "v${version}";
+          effectiveRev = if revFormat != null then revFormat else "v${version}";
           src = pkgs.fetchFromGitHub {
             inherit owner repo hash;
-            rev = actualRevFormat;
+            rev = effectiveRev;
           };
           buildArgs = cleanArgs // overrideArgs // { inherit src version; };
         in
