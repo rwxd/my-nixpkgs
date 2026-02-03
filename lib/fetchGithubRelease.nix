@@ -23,19 +23,21 @@
     , version
     , hash
     , build  # Function that takes { src, version, ... } and returns a derivation
-    , revFormat ? "v${version}"  # Override how tags are formatted
+    , revFormat ? null  # Override how tags are formatted (null means "v${version}")
     , ...
     }@args:
     let
       # Remove our custom args before passing to build function
       cleanArgs = builtins.removeAttrs args [ "pname" "owner" "repo" "version" "hash" "build" "revFormat" ];
+      defaultRevFormat = version: "v${version}";
     in
     lib.makeOverridable
-      ({ version, hash, revFormat ? "v${version}", ... }@overrideArgs:
+      ({ version, hash, revFormat ? null, ... }@overrideArgs:
         let
+          actualRevFormat = if revFormat != null then revFormat else defaultRevFormat version;
           src = pkgs.fetchFromGitHub {
             inherit owner repo hash;
-            rev = revFormat;
+            rev = actualRevFormat;
           };
           buildArgs = cleanArgs // overrideArgs // { inherit src version; };
         in
