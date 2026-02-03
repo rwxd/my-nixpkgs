@@ -110,5 +110,5 @@ This repository uses GitHub Actions for continuous integration:
 - **Update Workflow**: Automatically checks for new package releases daily and creates pull requests
 - **Renovate**: Keeps `flake.lock` up to date automatically
 
-[![CI](../../actions/workflows/ci.yml/badge.svg)](../../actions/workflows/ci.yml)
-[![Update Packages](../../actions/workflows/update-packages.yml/badge.svg)](../../actions/workflows/update-packages.yml)
+[![CI](https://github.com/rwxd/my-nixpkgs/actions/workflows/ci.yml/badge.svg)](https://github.com/rwxd/my-nixpkgs/actions/workflows/ci.yml)
+[![Update Packages](https://github.com/rwxd/my-nixpkgs/actions/workflows/update-packages.yml/badge.svg)](https://github.com/rwxd/my-nixpkgs/actions/workflows/update-packages.yml)

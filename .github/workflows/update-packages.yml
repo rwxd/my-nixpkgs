@@ -85,7 +85,6 @@ jobs:
           NEW_TAG="${{ steps.check-release.outputs.latest_tag }}"
           
           # Fetch the new archive to get the correct hash
-          TEMP_DIR=$(mktemp -d)
           ARCHIVE_URL="https://github.com/${{ matrix.package.owner }}/${{ matrix.package.repo }}/archive/refs/tags/$NEW_TAG.tar.gz"
           
           echo "Fetching archive from: $ARCHIVE_URL"
