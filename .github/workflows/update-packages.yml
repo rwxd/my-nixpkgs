@@ -1,0 +1,142 @@
+name: Update Packages
+
+on:
+  schedule:
+    # Run daily at 00:00 UTC
+    - cron: '0 0 * * *'
+  workflow_dispatch: # Allow manual trigger
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  check-updates:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        package:
+          - name: notify-me
+            owner: rwxd
+            repo: notify-me
+          - name: vmrss
+            owner: rwxd
+            repo: vmrss
+          - name: best-of
+            owner: rwxd
+            repo: best-of
+          - name: pdnsgrep
+            owner: akquinet
+            repo: pdnsgrep
+          - name: dnsbl-exporter
+            owner: Luzilla
+            repo: dnsbl_exporter
+      fail-fast: false
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v26
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check for new release
+        id: check-release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Get the latest release tag from GitHub
+          LATEST_TAG=$(gh release view --repo ${{ matrix.package.owner }}/${{ matrix.package.repo }} --json tagName --jq '.tagName' 2>/dev/null || echo "")
+          
+          if [ -z "$LATEST_TAG" ]; then
+            echo "No release found for ${{ matrix.package.name }}"
+            echo "has_update=false" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+          
+          # Remove 'v' prefix if present for version comparison
+          LATEST_VERSION="${LATEST_TAG#v}"
+          
+          # Get current version from package.nix
+          CURRENT_VERSION=$(grep -oP 'version = "\K[^"]+' pkgs/${{ matrix.package.name }}/package.nix || echo "0.0.0")
+          
+          echo "Current version: $CURRENT_VERSION"
+          echo "Latest version: $LATEST_VERSION"
+          
+          if [ "$CURRENT_VERSION" != "$LATEST_VERSION" ]; then
+            echo "Update available: $CURRENT_VERSION -> $LATEST_VERSION"
+            echo "has_update=true" >> $GITHUB_OUTPUT
+            echo "latest_version=$LATEST_VERSION" >> $GITHUB_OUTPUT
+            echo "latest_tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+          else
+            echo "Package is up to date"
+            echo "has_update=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update package
+        if: steps.check-release.outputs.has_update == 'true'
+        id: update-package
+        run: |
+          PACKAGE_NAME="${{ matrix.package.name }}"
+          PACKAGE_FILE="pkgs/$PACKAGE_NAME/package.nix"
+          NEW_VERSION="${{ steps.check-release.outputs.latest_version }}"
+          NEW_TAG="${{ steps.check-release.outputs.latest_tag }}"
+          
+          # Fetch the new archive to get the correct hash
+          ARCHIVE_URL="https://github.com/${{ matrix.package.owner }}/${{ matrix.package.repo }}/archive/refs/tags/$NEW_TAG.tar.gz"
+          
+          echo "Fetching archive from: $ARCHIVE_URL"
+          HASH=$(nix-prefetch-url --unpack "$ARCHIVE_URL" 2>&1 | tail -1)
+          SRI_HASH=$(nix hash to-sri --type sha256 "$HASH")
+          
+          echo "New hash: $SRI_HASH"
+          
+          # Update version in package.nix
+          sed -i "s/version = \"[^\"]*\"/version = \"$NEW_VERSION\"/" "$PACKAGE_FILE"
+          
+          # Update rev in package.nix
+          sed -i "s/rev = \"[^\"]*\"/rev = \"$NEW_TAG\"/" "$PACKAGE_FILE"
+          
+          # Update hash in package.nix
+          sed -i "s/sha256 = \"[^\"]*\"/sha256 = \"$SRI_HASH\"/" "$PACKAGE_FILE"
+          
+          echo "Package updated successfully"
+          echo "updated=true" >> $GITHUB_OUTPUT
+
+      - name: Test build package
+        if: steps.update-package.outputs.updated == 'true'
+        run: |
+          nix build ".#${{ matrix.package.name }}" --print-build-logs
+
+      - name: Create Pull Request
+        if: steps.update-package.outputs.updated == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update ${{ matrix.package.name }} to ${{ steps.check-release.outputs.latest_version }}"
+          title: "chore: update ${{ matrix.package.name }} to ${{ steps.check-release.outputs.latest_version }}"
+          body: |
+            ## Package Update
+            
+            This PR updates `${{ matrix.package.name }}` from the current version to `${{ steps.check-release.outputs.latest_version }}`.
+            
+            ### Changes
+            - Updated version to `${{ steps.check-release.outputs.latest_version }}`
+            - Updated rev to `${{ steps.check-release.outputs.latest_tag }}`
+            - Updated source hash
+            
+            ### Repository
+            https://github.com/${{ matrix.package.owner }}/${{ matrix.package.repo }}
+            
+            ### Release Notes
+            https://github.com/${{ matrix.package.owner }}/${{ matrix.package.repo }}/releases/tag/${{ steps.check-release.outputs.latest_tag }}
+            
+            ---
+            *This PR was automatically generated by the update-packages workflow*
+          branch: "update/${{ matrix.package.name }}-${{ steps.check-release.outputs.latest_version }}"
+          delete-branch: true
+          labels: |
+            automated
+            dependencies
