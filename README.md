@@ -60,7 +60,10 @@ nix hash convert --to sri --type sha256 <hash>
 # Method 2: Use a fake hash and let Nix tell you the correct one (recommended)
 # The --impure flag is needed because we're intentionally using an invalid hash
 nix build --impure '.#vmrss.override { version = "1.0.4"; hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; }'
-# Nix will fail with an error showing the expected hash that you can copy
+# This will fail with an error message like:
+#   "got: sha256-AAAA..."
+#   "expected: sha256-RsnylFdtr9Y+2/hFLDSxcp6MmsKA/KT0605PweYvFko="
+# Copy the "expected" hash and use it in your override
 ```
 
 ## Adding New Packages
