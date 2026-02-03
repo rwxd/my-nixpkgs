@@ -24,9 +24,11 @@ Add to your flake inputs:
 
 ## Packages
 
-- `vmrss` - Memory usage monitoring tool (v1.0.5)
-- `notify-me` - CLI tool to send notifications to various services (v1.2.6)
-- `best-of` - CLI tool to find the best of something (v1.5.1)
+- [`vmrss`](https://github.com/rwxd/vmrss) - Memory usage monitoring tool
+- [`notify-me`](https://github.com/rwxd/notify-me) - CLI tool to send notifications to various services
+- [`best-of`](https://github.com/rwxd/best-of) - CLI tool to find the best of something
+- [`dnsbl-exporter`](https://github.com/Luzilla/dnsbl_exporter) - Prometheus exporter for DNS Block Lists
+- [`pdnsgrep`](https://github.com/akquinet/pdnsgrep) - Search through PowerDNS records via API
 
 ## Adding New Packages
 
@@ -34,12 +36,12 @@ Create a new package in `pkgs/by-name/<package-name>/package.nix`.
 
 ## Updating Versions
 
-1. Update version and rev in `pkgs/by-name/vmrss/package.nix`
+1. Update version and rev in `pkgs/by-name/<package-name>/package.nix`
 2. Get the hash:
 
    ```bash
-   nix-prefetch-url --unpack https://github.com/rwxd/vmrss/archive/refs/tags/v1.0.6.tar.gz
-   nix hash convert --to sri --type sha256 <hash>
+   nix-prefetch-url --unpack https://github.com/owner/repo/archive/refs/tags/vX.Y.Z.tar.gz
+   nix hash to-sri --type sha256 <hash>
    ```
 
 3. Update the hash in package.nix
