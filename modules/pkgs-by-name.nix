@@ -5,6 +5,6 @@
   ];
 
   perSystem = {
-    pkgsDirectory = ../pkgs/by-name;
+    pkgsDirectory = ../pkgs;
   };
 }

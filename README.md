@@ -32,11 +32,11 @@ Add to your flake inputs:
 
 ## Adding New Packages
 
-Create a new package in `pkgs/by-name/<package-name>/package.nix`.
+Create a new package in `pkgs/<package-name>/package.nix`.
 
 ## Updating Versions
 
-1. Update version and rev in `pkgs/by-name/<package-name>/package.nix`
+1. Update version and rev in `pkgs/<package-name>/package.nix`
 2. Get the hash:
 
    ```bash
