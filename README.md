@@ -24,7 +24,9 @@ Add to your flake inputs:
 
 ## Packages
 
-- `vmrss` - Memory usage monitoring tool
+- `vmrss` - Memory usage monitoring tool (v1.0.5)
+- `notify-me` - CLI tool to send notifications to various services (v1.2.6)
+- `best-of` - CLI tool to find the best of something (v1.5.1)
 
 ## Adding New Packages
 
