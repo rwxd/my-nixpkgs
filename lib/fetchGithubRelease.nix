@@ -23,9 +23,10 @@
     , version
     , hash
     , build  # Function that takes { src, version, ... } and returns a derivation
-    , revFormat ? null  # Optional: Override rev format for non-standard tags.
-                        # null (default): uses "v${version}" template (e.g., "v1.0.5")
-                        # string: uses the exact string provided (must match the git tag exactly)
+    , revFormat ? null  # Optional: Override git tag/rev for non-standard formats.
+                        # null (default): uses "v${version}" (e.g., "v1.0.5")
+                        # string: uses the exact git tag/rev provided (e.g., "release-1.0.0")
+                        # When overriding version, you typically also need to override revFormat
     , ...
     }@args:
     let
