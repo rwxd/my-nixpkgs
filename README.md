@@ -25,42 +25,81 @@ Add to your flake inputs:
 ## Packages
 
 - `vmrss` - Memory usage monitoring tool (latest: v1.0.5)
-  - `vmrss/vmrss` - Latest version (1.0.5)
-  - `vmrss/vmrss_1_0_5` - Version 1.0.5
-  - `vmrss/vmrss_1_0_4` - Version 1.0.4
 
 ## Version Management
 
-Multiple versions can be accessed:
+All packages support dynamic version overriding using Nix's `.override` mechanism. You don't need to maintain a hardcoded list of versions!
 
-- `vmrss/vmrss` - Latest/default version
-- `vmrss/vmrss_1_0_5` - Specific version 1.0.5
-- `vmrss/vmrss_1_0_4` - Specific version 1.0.4
+### Using the Latest Version
+
+```nix
+# In your flake or configuration
+pkgs.vmrss
+```
+
+### Using a Specific Version
+
+Override the version and hash for any package:
+
+```nix
+pkgs.vmrss.override {
+  version = "1.0.4";
+  hash = "sha256-RsnylFdtr9Y+2/hFLDSxcp6MmsKA/KT0605PweYvFko=";
+}
+```
+
+### Finding the Hash for a Version
+
+To get the hash for a specific version:
+
+```bash
+# Method 1: Using nix-prefetch (if available)
+nix-prefetch-url --unpack https://github.com/rwxd/vmrss/archive/refs/tags/v1.0.4.tar.gz
+nix hash convert --to sri --type sha256 <hash>
+
+# Method 2: Use a fake hash and let Nix tell you the correct one
+nix build --impure '.#vmrss.override { version = "1.0.4"; hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA="; }'
+# Nix will fail and show you the expected hash
+```
 
 ## Adding New Packages
 
-Create a new package in `pkgs/by-name/<package-name>/package.nix`.
+1. Create a new package directory in `pkgs/by-name/<package-name>/`
+2. Add a `package.nix` file using the version helper:
+
+```nix
+{ pkgs, lib, ... }:
+
+let
+  versionHelper = import ../../../lib/fetchGithubRelease.nix { inherit pkgs lib; };
+in
+{
+  mypackage = versionHelper.makeVersionedGithubPackage {
+    pname = "mypackage";
+    owner = "github-owner";
+    repo = "repo-name";
+    version = "1.0.0";
+    hash = "sha256-...";
+    
+    build = { src, version, ... }: pkgs.buildGoModule {
+      # or pkgs.rustPlatform.buildRustPackage, etc.
+      pname = "mypackage";
+      inherit version src;
+      # ... rest of the build config
+    };
+  };
+}
+```
 
 ## Updating Versions
 
-1. Add new version to the package.nix file:
+When a new version is released, simply update the default version in the package.nix file:
 
-   ```nix
-   vmrss_1_0_6 = buildVmrss {
-     version = "1.0.6";
-     hash = "sha256-...";
-   };
-   ```
+1. Change the `version` field to the new version
+2. Update the `hash` field (use the fake hash method above to find it)
+3. Commit and push
 
-2. Get the hash:
-
-   ```bash
-   nix-prefetch-url --unpack https://github.com/rwxd/vmrss/archive/refs/tags/v1.0.6.tar.gz
-   nix hash convert --to sri --type sha256 <hash>
-   ```
-
-3. Update the default `vmrss` to point to the latest version
-4. Commit and push
+No need to maintain a list of old versions! Users can override to any version they need.
 
 ## Testing
 
@@ -68,9 +107,12 @@ Create a new package in `pkgs/by-name/<package-name>/package.nix`.
 # Show all packages
 nix flake show
 
+# Build the default version
+nix build '.#vmrss'
+
 # Build a specific version
-nix build '.#"vmrss/vmrss_1_0_4"'
+nix build --impure '.#vmrss.override { version = "1.0.4"; hash = "sha256-RsnylFdtr9Y+2/hFLDSxcp6MmsKA/KT0605PweYvFko="; }'
 
 # Run directly
-nix run '.#"vmrss/vmrss"' -- --help
+nix run '.#vmrss' -- --help
 ```
