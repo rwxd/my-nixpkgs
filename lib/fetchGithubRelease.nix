@@ -24,6 +24,7 @@
     , hash
     , build  # Function that takes { src, version, ... } and returns a derivation
     , revFormat ? null  # Override how tags are formatted (null means "v${version}")
+                        # This should be the complete rev string, e.g., "release-1.0.0" not a template
     , ...
     }@args:
     let
