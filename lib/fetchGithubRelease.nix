@@ -23,8 +23,9 @@
     , version
     , hash
     , build  # Function that takes { src, version, ... } and returns a derivation
-    , revFormat ? null  # Override how tags are formatted (null means "v${version}")
-                        # This should be the complete rev string, e.g., "release-1.0.0" not a template
+    , revFormat ? null  # Optional: Override rev format for non-standard tags.
+                        # null (default): uses "v${version}" template (e.g., "v1.0.5")
+                        # string: uses the exact string provided (must match the git tag exactly)
     , ...
     }@args:
     let

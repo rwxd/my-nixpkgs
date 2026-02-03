@@ -53,7 +53,7 @@ pkgs.vmrss.override {
 To get the hash for a specific version:
 
 ```bash
-# Method 1: Using nix-prefetch-url (requires Nix to be installed)
+# Method 1: Using nix-prefetch-url
 nix-prefetch-url --unpack https://github.com/rwxd/vmrss/archive/refs/tags/v1.0.4.tar.gz
 nix hash convert --to sri --type sha256 <hash>
 
