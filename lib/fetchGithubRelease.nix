@@ -29,12 +29,11 @@
     let
       # Remove our custom args before passing to build function
       cleanArgs = builtins.removeAttrs args [ "pname" "owner" "repo" "version" "hash" "build" "revFormat" ];
-      defaultRevFormat = version: "v${version}";
     in
     lib.makeOverridable
       ({ version, hash, revFormat ? null, ... }@overrideArgs:
         let
-          actualRevFormat = if revFormat != null then revFormat else defaultRevFormat version;
+          actualRevFormat = if revFormat != null then revFormat else "v${version}";
           src = pkgs.fetchFromGitHub {
             inherit owner repo hash;
             rev = actualRevFormat;
