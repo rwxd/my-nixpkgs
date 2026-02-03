@@ -4,20 +4,28 @@ Custom nixpkgs repository for packages.
 
 ## Usage
 
-Add to your flake inputs:
+Add to your flake:
 
 ```nix
 {
   inputs = {
-    my-nixpkgs.url = "github:rwxd/my-nixpkgs";
+    nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+    rwxd-nixpkgs.url = "github:rwxd/my-nixpkgs";
+    rwxd-nixpkgs.inputs.nixpkgs.follows = "nixpkgs";
   };
   
-  outputs = { nixpkgs, my-nixpkgs, ... }: {
-    # Use the overlay
-    nixpkgs.overlays = [ my-nixpkgs.overlays.default ];
-    
-    # Or use packages directly
-    packages.x86_64-linux.default = my-nixpkgs.packages.x86_64-linux.vmrss;
+  outputs = { nixpkgs, rwxd-nixpkgs, ... }: {
+    nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
+      specialArgs = { inherit rwxd-nixpkgs; };
+      modules = [
+        ({ pkgs, rwxd-nixpkgs, ... }: {
+          environment.systemPackages = [
+            rwxd-nixpkgs.packages.${pkgs.system}.vmrss
+            rwxd-nixpkgs.packages.${pkgs.system}.notify-me
+          ];
+        })
+      ];
+    };
   };
 }
 ```
