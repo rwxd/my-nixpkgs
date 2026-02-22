@@ -1,11 +1,13 @@
 {
-  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["config:recommended"],
-  "nix": {
-    "enabled": true
-  },
-  "lockFileMaintenance": {
-    "enabled": true,
-    "automerge": true
-  }
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "extends": [
+        "https://git.chaops.de/rwxd/renovate-config/raw/branch/main/standard.json"
+    ],
+    "nix": {
+        "enabled": true
+    },
+    "lockFileMaintenance": {
+        "enabled": true,
+        "automerge": true
+    }
 }
