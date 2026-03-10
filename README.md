@@ -44,6 +44,40 @@ Create a new package in `pkgs/<package-name>/package.nix`.
 
 ## Updating Versions
 
+### Automatic Updates (Recommended)
+
+Packages are automatically updated daily via GitHub Actions. When a new version is released on GitHub, the workflow will:
+
+1. Detect the new release
+2. Update the package version, rev, and hash
+3. Build the package to ensure it works
+4. Create a pull request automatically
+
+The automatic update workflow runs daily at 00:00 UTC and can also be triggered manually from the [Actions tab](../../actions/workflows/update-packages.yml).
+
+### Manual Updates
+
+Use the provided update script:
+
+```bash
+./scripts/update-package.sh <package-name>
+```
+
+Example:
+```bash
+./scripts/update-package.sh notify-me
+```
+
+The script will:
+- Check for the latest release on GitHub
+- Update version, rev, and hash automatically
+- Build the package to verify it works
+- Show you the changes made
+
+### Manual Update (Low-level)
+
+If you prefer to update manually:
+
 1. Update version and rev in `pkgs/<package-name>/package.nix`
 2. Get the hash:
 
@@ -67,3 +101,14 @@ nix build '.#vmrss'
 # Run directly
 nix run '.#vmrss' -- --help
 ```
+
+## CI/CD
+
+This repository uses GitHub Actions for continuous integration:
+
+- **CI Workflow**: Builds all packages and checks the flake on every pull request and push to main
+- **Update Workflow**: Automatically checks for new package releases daily and creates pull requests
+- **Renovate**: Keeps `flake.lock` up to date automatically
+
+[![CI](https://github.com/rwxd/my-nixpkgs/actions/workflows/ci.yml/badge.svg)](https://github.com/rwxd/my-nixpkgs/actions/workflows/ci.yml)
+[![Update Packages](https://github.com/rwxd/my-nixpkgs/actions/workflows/update-packages.yml/badge.svg)](https://github.com/rwxd/my-nixpkgs/actions/workflows/update-packages.yml)
