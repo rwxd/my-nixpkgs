@@ -43,6 +43,11 @@ jobs:
           restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}-
           gc-max-store-size-linux: 2G
 
+      - name: Materialize flake source
+        # nix flake metadata alone can return an unmaterialized store path on
+        # GitHub Actions, which breaks nix-update's nested builtins.getFlake.
+        run: nix flake archive > /dev/null
+
       - name: Generate GitHub App token
         id: app-token
         if: ${{ vars.UPDATE_APP_CLIENT_ID != '' }}
