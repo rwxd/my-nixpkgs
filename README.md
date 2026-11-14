@@ -37,6 +37,7 @@ Add to your flake:
 - [`best-of`](https://github.com/rwxd/best-of) - CLI tool to find the best of something
 - [`dnsbl-exporter`](https://github.com/Luzilla/dnsbl_exporter) - Prometheus exporter for DNS Block Lists
 - [`pdnsgrep`](https://github.com/akquinet/pdnsgrep) - Search through PowerDNS records via API
+- [`immich-wallpaper-sync`](https://git.chaops.de/rwxd/immich-wallpaper-sync) - Sync images from Immich into a wallpaper directory
 
 ## Adding New Packages
 
