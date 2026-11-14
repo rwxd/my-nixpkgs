@@ -43,15 +43,28 @@ jobs:
           restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}-
           gc-max-store-size-linux: 2G
 
+      - name: Generate GitHub App token
+        id: app-token
+        if: ${{ vars.UPDATE_APP_ID != '' }}
+        uses: actions/create-github-app-token@v3
+        with:
+          app-id: ${{ vars.UPDATE_APP_ID }}
+          private-key: ${{ secrets.UPDATE_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ github.event.repository.name }}
+          permission-contents: write
+          permission-pull-requests: write
+
       - name: Update package
         run: nix run --inputs-from . nixpkgs#nix-update -- --flake --build --format "${{ matrix.package }}"
 
       - name: Create pull request
-        # A PAT is recommended here: pull requests created with GITHUB_TOKEN do not
-        # trigger further GitHub Actions workflows (CI would not run on them).
+        # An app token is preferred: PRs created with GITHUB_TOKEN do not trigger
+        # further GitHub Actions workflows, so CI would not run on them.
+        # UPDATE_TOKEN is supported as a PAT fallback.
         uses: peter-evans/create-pull-request@v8
         with:
-          token: ${{ secrets.UPDATE_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token || secrets.UPDATE_TOKEN || secrets.GITHUB_TOKEN }}
           branch: update/${{ matrix.package }}
           delete-branch: true
           title: "chore(deps): update ${{ matrix.package }}"

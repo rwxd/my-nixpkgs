@@ -133,10 +133,20 @@ nix run --inputs-from . nixpkgs#nix-update -- --flake --build --format vmrss
 ```
 
 > [!NOTE]
-> Pull requests created with the default `GITHUB_TOKEN` do not trigger other
-> workflows, so CI will not run on automated update PRs. Add an `UPDATE_TOKEN`
-> repository secret (a fine-grained PAT with `contents: write` and
-> `pull-requests: write`) to make automated PRs run CI.
+> Automated update PRs must be created by a GitHub App (or a PAT), not the
+> default `GITHUB_TOKEN`; otherwise GitHub does not trigger CI for them. The
+> workflow prefers a GitHub App:
+>
+> 1. Create a **private** GitHub App with repository permissions
+>    **Contents: read and write** and **Pull requests: read and write**, then
+>    install it on `rwxd/my-nixpkgs`.
+> 2. Add a repository **variable** `UPDATE_APP_ID` containing the App ID.
+> 3. Add a repository **secret** `UPDATE_APP_PRIVATE_KEY` containing the App's
+>    private key.
+>
+> Without the App, the workflow falls back to the `UPDATE_TOKEN` secret
+> (fine-grained PAT with `contents: write` and `pull-requests: write`) and
+> finally to `GITHUB_TOKEN`.
 
 ## CI
 
