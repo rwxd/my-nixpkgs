@@ -44,7 +44,7 @@ jobs:
           gc-max-store-size-linux: 2G
 
       - name: Update package
-        run: nix develop --command nix-update --flake --build --format "${{ matrix.package }}"
+        run: nix run --inputs-from . nixpkgs#nix-update -- --flake --build --format "${{ matrix.package }}"
 
       - name: Create pull request
         # A PAT is recommended here: pull requests created with GITHUB_TOKEN do not
