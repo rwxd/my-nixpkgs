@@ -140,7 +140,8 @@ nix run --inputs-from . nixpkgs#nix-update -- --flake --build --format vmrss
 > 1. Create a **private** GitHub App with repository permissions
 >    **Contents: read and write** and **Pull requests: read and write**, then
 >    install it on `rwxd/my-nixpkgs`.
-> 2. Add a repository **variable** `UPDATE_APP_ID` containing the App ID.
+> 2. Add a repository **variable** `UPDATE_APP_CLIENT_ID` containing the App's
+>    Client ID (shown on the App settings page).
 > 3. Add a repository **secret** `UPDATE_APP_PRIVATE_KEY` containing the App's
 >    private key.
 >

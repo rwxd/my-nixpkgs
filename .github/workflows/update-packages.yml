@@ -45,10 +45,10 @@ jobs:
 
       - name: Generate GitHub App token
         id: app-token
-        if: ${{ vars.UPDATE_APP_ID != '' }}
+        if: ${{ vars.UPDATE_APP_CLIENT_ID != '' }}
         uses: actions/create-github-app-token@v3
         with:
-          app-id: ${{ vars.UPDATE_APP_ID }}
+          client-id: ${{ vars.UPDATE_APP_CLIENT_ID }}
           private-key: ${{ secrets.UPDATE_APP_PRIVATE_KEY }}
           owner: ${{ github.repository_owner }}
           repositories: ${{ github.event.repository.name }}
