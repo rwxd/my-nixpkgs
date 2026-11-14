@@ -1,10 +1,15 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  buildGoModule,
+  fetchFromGitHub,
+  ...
+}:
 
-pkgs.buildGoModule rec {
+buildGoModule rec {
   pname = "pdnsgrep";
   version = "1.3.2";
 
-  src = pkgs.fetchFromGitHub {
+  src = fetchFromGitHub {
     owner = "akquinet";
     repo = "pdnsgrep";
     rev = "v${version}";
@@ -17,7 +22,11 @@ pkgs.buildGoModule rec {
   meta = {
     description = "Search tool for PowerDNS logs";
     homepage = "https://github.com/akquinet/pdnsgrep";
+    changelog = "https://github.com/akquinet/pdnsgrep/releases";
     license = lib.licenses.gpl3;
     maintainers = with lib.maintainers; [ rwxd ];
+    mainProgram = "pdnsgrep";
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
+    sourceProvenance = with lib.sourceTypes; [ fromSource ];
   };
 }

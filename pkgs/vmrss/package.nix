@@ -1,10 +1,15 @@
-{ pkgs, lib, ... }:
+{
+  lib,
+  buildGoModule,
+  fetchFromGitHub,
+  ...
+}:
 
-pkgs.buildGoModule rec {
+buildGoModule rec {
   pname = "vmrss";
   version = "1.2.2";
 
-  src = pkgs.fetchFromGitHub {
+  src = fetchFromGitHub {
     owner = "rwxd";
     repo = "vmrss";
     rev = "v${version}";
@@ -16,7 +21,11 @@ pkgs.buildGoModule rec {
   meta = {
     description = "Simple tool to show the memory usage of a process and its children";
     homepage = "https://github.com/rwxd/vmrss";
+    changelog = "https://github.com/rwxd/vmrss/releases";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ rwxd ];
+    mainProgram = "vmrss";
+    platforms = lib.platforms.linux;
+    sourceProvenance = with lib.sourceTypes; [ fromSource ];
   };
 }

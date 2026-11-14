@@ -1,10 +1,15 @@
-{ pkgs, lib, ... }:
+{
+  lib,
+  buildGoModule,
+  fetchFromGitHub,
+  ...
+}:
 
-pkgs.buildGoModule rec {
+buildGoModule rec {
   pname = "best-of";
   version = "1.5.2";
 
-  src = pkgs.fetchFromGitHub {
+  src = fetchFromGitHub {
     owner = "rwxd";
     repo = "best-of";
     rev = "v${version}";
@@ -16,7 +21,11 @@ pkgs.buildGoModule rec {
   meta = {
     description = "CLI tool to find the best of something";
     homepage = "https://github.com/rwxd/best-of";
+    changelog = "https://github.com/rwxd/best-of/releases";
     license = lib.licenses.gpl3;
     maintainers = with lib.maintainers; [ rwxd ];
+    mainProgram = "best-of";
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
+    sourceProvenance = with lib.sourceTypes; [ fromSource ];
   };
 }

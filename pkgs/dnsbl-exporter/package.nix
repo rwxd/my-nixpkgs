@@ -1,10 +1,15 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  buildGoModule,
+  fetchFromGitHub,
+  ...
+}:
 
-pkgs.buildGoModule rec {
+buildGoModule rec {
   pname = "dnsbl-exporter";
   version = "0.12.0";
 
-  src = pkgs.fetchFromGitHub {
+  src = fetchFromGitHub {
     owner = "Luzilla";
     repo = "dnsbl_exporter";
     rev = "v${version}";
@@ -30,8 +35,11 @@ pkgs.buildGoModule rec {
   meta = with lib; {
     description = "Prometheus exporter for DNS Block Lists (DNSBL/RBL)";
     homepage = "https://github.com/Luzilla/dnsbl_exporter";
+    changelog = "https://github.com/Luzilla/dnsbl_exporter/releases";
     license = licenses.asl20;
     maintainers = with lib.maintainers; [ rwxd ];
     mainProgram = "dnsbl_exporter";
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
+    sourceProvenance = with lib.sourceTypes; [ fromSource ];
   };
 }

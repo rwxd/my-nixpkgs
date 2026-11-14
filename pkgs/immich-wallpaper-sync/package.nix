@@ -1,14 +1,19 @@
-{ lib, pkgs, ... }:
+{
+  lib,
+  buildGoModule,
+  fetchFromGitea,
+  ...
+}:
 
-pkgs.buildGoModule {
+buildGoModule rec {
   pname = "immich-wallpaper-sync";
   version = "0.1.0";
 
-  src = pkgs.fetchFromGitea {
+  src = fetchFromGitea {
     domain = "git.chaops.de";
     owner = "rwxd";
     repo = "immich-wallpaper-sync";
-    rev = "v0.1.0";
+    rev = "v${version}";
     hash = "sha256-VUg16FJfaFycm4OO7IVNIpYurWGWsJWt5nD6HGhizCg=";
   };
 
@@ -17,7 +22,11 @@ pkgs.buildGoModule {
   meta = {
     description = "Sync images from a self-hosted Immich server into a wallpaper directory";
     homepage = "https://git.chaops.de/rwxd/immich-wallpaper-sync";
+    changelog = "https://git.chaops.de/rwxd/immich-wallpaper-sync/releases";
     license = lib.licenses.mit;
     maintainers = with lib.maintainers; [ rwxd ];
+    mainProgram = "immich-wallpaper-sync";
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
+    sourceProvenance = with lib.sourceTypes; [ fromSource ];
   };
 }
