@@ -127,9 +127,6 @@ To update manually:
 ```bash
 nix develop
 nix-update --flake --build --format vmrss
-
-# or without entering the dev shell
-nix run --inputs-from . nixpkgs#nix-update -- --flake --build --format vmrss
 ```
 
 > [!NOTE]
