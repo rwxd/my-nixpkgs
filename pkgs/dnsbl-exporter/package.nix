@@ -2,16 +2,16 @@
 
 pkgs.buildGoModule rec {
   pname = "dnsbl-exporter";
-  version = "0.10.0";
+  version = "0.12.0";
 
   src = pkgs.fetchFromGitHub {
     owner = "Luzilla";
     repo = "dnsbl_exporter";
     rev = "v${version}";
-    hash = "sha256-jN8PD1jdXJ7hZKawslqtFUmWAV0DehNS5hBevrFcMMA=";
+    hash = "sha256-QxCXgPRox9Lgfl+3RNxgcgiRSy0C1Gogykby+FcnmTc=";
   };
 
-  vendorHash = "sha256-5RjZEvCYne6vDaSVn7kjZfAoQM/VAmxMxff9St6POjk=";
+  vendorHash = "sha256-J+20vMxgLhvouddhKCmB6FSosN8J1FQXA6Ed8JT6h98=";
 
   ldflags = [
     "-s"

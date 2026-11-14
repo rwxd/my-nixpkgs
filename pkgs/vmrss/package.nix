@@ -1,14 +1,14 @@
 { pkgs, lib, ... }:
 
-pkgs.buildGoModule.override { go = pkgs.go_1_26; } {
+pkgs.buildGoModule rec {
   pname = "vmrss";
-  version = "1.2.0";
+  version = "1.2.2";
 
   src = pkgs.fetchFromGitHub {
     owner = "rwxd";
     repo = "vmrss";
-    rev = "v1.2.0";
-    sha256 = "sha256-ps87iD52aTwGqkep4G1zDs2CzdU51cUGX+F7fgUITlo=";
+    rev = "v${version}";
+    sha256 = "sha256-BB3Xg0CIjcH4fnzLTHuClzFCsE254uB8AlPrL4LbB3g=";
   };
 
   vendorHash = null;

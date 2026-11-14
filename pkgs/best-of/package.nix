@@ -1,14 +1,14 @@
 { pkgs, lib, ... }:
 
-pkgs.buildGoModule {
+pkgs.buildGoModule rec {
   pname = "best-of";
-  version = "1.5.1";
+  version = "1.5.2";
 
   src = pkgs.fetchFromGitHub {
     owner = "rwxd";
     repo = "best-of";
-    rev = "v1.5.1";
-    sha256 = "sha256-6a9NMAb70cP/o7nhvcFgk+l7r5TeXBEqY6PdDkaVtkA=";
+    rev = "v${version}";
+    sha256 = "sha256-TCVKbpwxSq/CIxKodMSeuLgoeVQwYumhwdZ+S2cOJ8Q=";
   };
 
   vendorHash = null;

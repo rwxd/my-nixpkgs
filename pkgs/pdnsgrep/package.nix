@@ -1,17 +1,17 @@
 { lib, pkgs, ... }:
 
-pkgs.buildGoModule {
+pkgs.buildGoModule rec {
   pname = "pdnsgrep";
-  version = "1.1.2";
+  version = "1.3.2";
 
   src = pkgs.fetchFromGitHub {
     owner = "akquinet";
     repo = "pdnsgrep";
-    rev = "v1.1.2";
-    sha256 = "sha256-NFJkLYOHBUYRVehT0VBIFPagLiR8cVvVkAnqCwVUqYg=";
+    rev = "v${version}";
+    sha256 = "sha256-O1oTVdzptLBv47xp8JurSC4c6ofGOr1FKPOkiUizg+w=";
   };
 
-  vendorHash = "sha256-kbX3oTg2OGr4Gj9MEXa2Z7AlYIyv6LNIY4mR06F6OvQ=";
+  vendorHash = "sha256-Rx2TmYubU+EqvfyWjX5A3EC+7Pt/k68I6PmQdCwYlfE=";
   proxyVendor = true;
 
   meta = {
