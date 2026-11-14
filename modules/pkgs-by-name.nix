@@ -6,5 +6,6 @@
 
   perSystem = {
     pkgsDirectory = ../pkgs;
+    pkgsFilterByPlatforms = true;
   };
 }

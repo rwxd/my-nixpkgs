@@ -1,14 +1,11 @@
-{ withSystem, ... }:
-
+{ lib, ... }:
 {
-  flake = {
-    overlays.default =
-      _final: prev:
-      withSystem prev.stdenv.hostPlatform.system (
-        { config, ... }:
-        {
-          local = config.packages;
-        }
-      );
+  flake.overlays.default = final: _prev: {
+    local = lib.filterAttrs (_: package: lib.meta.availableOn final.stdenv.hostPlatform package) (
+      lib.filesystem.packagesFromDirectoryRecursive {
+        directory = ../pkgs;
+        inherit (final) callPackage;
+      }
+    );
   };
 }

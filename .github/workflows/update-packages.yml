@@ -1,0 +1,66 @@
+name: Update packages
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: update-packages
+  cancel-in-progress: false
+
+jobs:
+  update:
+    name: Update ${{ matrix.package }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        package:
+          - best-of
+          - dnsbl-exporter
+          - immich-wallpaper-sync
+          - notify-me
+          - pdnsgrep
+          - vmrss
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v31
+        with:
+          github_access_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Restore and save Nix store
+        uses: nix-community/cache-nix-action@v7
+        with:
+          primary-key: nix-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/*.nix', '**/flake.lock') }}
+          restore-prefixes-first-match: nix-${{ runner.os }}-${{ runner.arch }}-
+          gc-max-store-size-linux: 2G
+
+      - name: Update package
+        run: nix run --inputs-from . nixpkgs#nix-update -- --flake --build --format "${{ matrix.package }}"
+
+      - name: Create pull request
+        # A PAT is recommended here: pull requests created with GITHUB_TOKEN do not
+        # trigger further GitHub Actions workflows (CI would not run on them).
+        uses: peter-evans/create-pull-request@v8
+        with:
+          token: ${{ secrets.UPDATE_TOKEN || secrets.GITHUB_TOKEN }}
+          branch: update/${{ matrix.package }}
+          delete-branch: true
+          title: "chore(deps): update ${{ matrix.package }}"
+          commit-message: "chore(deps): update ${{ matrix.package }}"
+          body: |
+            Automated update of `${{ matrix.package }}` via `nix-update`.
+
+            The package was rebuilt successfully before this pull request was opened.
+          labels: |
+            automated
+            dependencies
+          assignees: rwxd

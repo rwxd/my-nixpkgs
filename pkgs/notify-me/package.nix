@@ -1,13 +1,18 @@
-{ pkgs, lib, ... }:
+{
+  lib,
+  buildGoModule,
+  fetchFromGitHub,
+  ...
+}:
 
-pkgs.buildGoModule {
+buildGoModule rec {
   pname = "notify-me";
   version = "1.2.6";
 
-  src = pkgs.fetchFromGitHub {
+  src = fetchFromGitHub {
     owner = "rwxd";
     repo = "notify-me";
-    rev = "v1.2.6";
+    rev = "v${version}";
     sha256 = "sha256-TlVdScPrVMQQKT3qFdH3ozM7nWelMafifhGDqq4vR0g=";
   };
 
@@ -17,7 +22,11 @@ pkgs.buildGoModule {
   meta = {
     description = "CLI tool to send notifications to various services";
     homepage = "https://github.com/rwxd/notify-me";
+    changelog = "https://github.com/rwxd/notify-me/releases";
     license = lib.licenses.gpl3;
     maintainers = with lib.maintainers; [ rwxd ];
+    mainProgram = "notify-me";
+    platforms = lib.platforms.linux ++ lib.platforms.darwin;
+    sourceProvenance = with lib.sourceTypes; [ fromSource ];
   };
 }
