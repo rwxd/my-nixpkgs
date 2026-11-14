@@ -56,7 +56,11 @@ jobs:
           permission-pull-requests: write
 
       - name: Update package
-        run: nix run --inputs-from . nixpkgs#nix-update -- --flake --build --format "${{ matrix.package }}"
+        run: |
+          # Run the binary directly: `nix run`/`nix develop` inject build-env
+          # variables that break nix-update's nested flake lookups.
+          nix_update="$(nix build --inputs-from . nixpkgs#nix-update --no-link --print-out-paths)/bin/nix-update"
+          "$nix_update" --flake --build --format "${{ matrix.package }}"
 
       - name: Create pull request
         # An app token is preferred: PRs created with GITHUB_TOKEN do not trigger
